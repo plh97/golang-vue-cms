@@ -4,16 +4,15 @@ import { baseURL } from './config'
 
 // Helper function to convert an object into a query string
 function toQueryString(data: Record<string, any>): string {
-    const params = new URLSearchParams()
-    for (const key in data) {
-        if (Object.prototype.hasOwnProperty.call(data, key) && data[key] !== undefined && data[key] !== null) {
-            params.append(key, data[key])
-        }
+  const params = new URLSearchParams()
+  for (const key in data) {
+    if (Object.prototype.hasOwnProperty.call(data, key) && data[key] !== undefined && data[key] !== null) {
+      params.append(key, data[key])
     }
-    const queryString = params.toString()
-    return queryString ? `?${queryString}` : ''
+  }
+  const queryString = params.toString()
+  return queryString ? `?${queryString}` : ''
 }
-
 
 export async function request(url: string, data: Record<string, any> = {}, options: any = {}) {
   const config: RequestInit = {
@@ -23,20 +22,20 @@ export async function request(url: string, data: Record<string, any> = {}, optio
       'Content-Type': 'application/json',
       ...(options.headers ?? {}),
     },
-    credentials: "include"
+    credentials: 'include',
   }
-  
-  let finalUrl = baseURL + "/v1" + url
-  
+
+  let finalUrl = `${baseURL}/v1${url}`
+
   // 1. 🔍 HANDLE GET REQUEST PARAMETERS
   if (config.method === 'GET') {
-      const queryString = toQueryString(data)
-      // Append the query string to the URL
-      if (queryString) {
-          finalUrl += queryString
-      }
-      // GET requests MUST NOT have a body
-      config.body = undefined 
+    const queryString = toQueryString(data)
+    // Append the query string to the URL
+    if (queryString) {
+      finalUrl += queryString
+    }
+    // GET requests MUST NOT have a body
+    config.body = undefined
   }
 
   // 2. 📝 HANDLE POST/PUT/DELETE REQUEST BODY (your original logic)
@@ -46,7 +45,8 @@ export async function request(url: string, data: Record<string, any> = {}, optio
       // eslint-disable-next-line ts/ban-ts-comment
       // @ts-ignore
       delete config.headers['Content-Type']
-    } else {
+    }
+    else {
       // eslint-disable-next-line ts/ban-ts-comment
       // @ts-ignore
       config.headers['Content-Type'] = 'application/json'
@@ -66,8 +66,8 @@ export async function request(url: string, data: Record<string, any> = {}, optio
       FMessage.error({
         content: data?.message,
       })
-      setToken('')
-      location.replace('/login')
+      // setToken('')
+      // location.replace('/login')
       return Promise.reject(new Error('未登录或登录已过期，请重新登录'))
     }
     if (data?.code !== 0) {

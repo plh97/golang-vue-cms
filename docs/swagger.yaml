@@ -10,6 +10,11 @@ definitions:
     type: object
   v1.GetProfileResponseData:
     properties:
+      email:
+        example: alan
+        type: string
+      image:
+        type: string
       nickname:
         example: alan
         type: string
@@ -67,13 +72,15 @@ definitions:
       email:
         example: 1234@gmail.com
         type: string
+      image:
+        type: string
       nickname:
         example: alan
         type: string
     required:
     - email
     type: object
-host: localhost:8291
+host: localhost:8000
 info:
   contact:
     email: support@swagger.io

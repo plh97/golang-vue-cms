@@ -15,7 +15,7 @@
         },
         "version": "1.0.0"
     },
-    "host": "localhost:8291",
+    "host": "localhost:8000",
     "paths": {
         "/login": {
             "post": {
@@ -166,6 +166,13 @@
         "v1.GetProfileResponseData": {
             "type": "object",
             "properties": {
+                "email": {
+                    "type": "string",
+                    "example": "alan"
+                },
+                "image": {
+                    "type": "string"
+                },
                 "nickname": {
                     "type": "string",
                     "example": "alan"
@@ -252,6 +259,9 @@
                 "email": {
                     "type": "string",
                     "example": "1234@gmail.com"
+                },
+                "image": {
+                    "type": "string"
                 },
                 "nickname": {
                     "type": "string",

@@ -5,9 +5,9 @@ import {
 import { FMessage } from '@fesjs/fes-design'
 import PageLoading from '@/components/pageLoading.vue'
 import UserCenter from '@/components/userCenter.vue'
+import { request } from './api'
 import { getToken } from './common/utils'
 import { baseURL } from './config'
-import { request } from './api'
 
 export default defineRuntimeConfig({
   login: {
@@ -70,9 +70,10 @@ export default defineRuntimeConfig({
     loading: <PageLoading />,
     action: async () => {
       access.setRole('admin')
-      if (location.pathname === "/login") return
+      if (location.pathname === '/login') {
+        return
+      }
       const res = await request('/profile')
-      console.log(res);
       return new Promise((resolve) => {
         // 初始化应用的全局状态，可以通过 useModel('@@initialState') 获取，具体用法看@/components/UserCenter 文件
         resolve(res)

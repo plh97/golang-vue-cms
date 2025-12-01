@@ -56,8 +56,8 @@ async function submitHandler() {
     method: 'POST',
   }).then(async (res) => {
     setToken(res.accessToken)
-    window.location.replace('/user')
-    // router.replace('/user')
+    // window.location.replace('/user')
+    router.replace('/user')
   }).catch(() => {
     state.submitLoading = false
     state.submitText = '提交'
@@ -75,14 +75,7 @@ function goRegister() {
 
 <template>
   <div class="container" id="login">
-    <div class="logo">
-      <img src="/logo-min.png" />
-      Ohayo
-    </div>
     <FForm ref="formRef" class="form" label-width="140px" label-position="top" :model="state" :rules="rules">
-      <p class="title">
-        后台管理系统
-      </p>
       <FFormItem prop="username" label="用户名">
         <FInput v-model="state.username" class="input" placeholder="请输入用户名" />
       </FFormItem>
@@ -118,7 +111,6 @@ function goRegister() {
 }
 
 .container {
-  background: linear-gradient(to right bottom, #fee2d7, #fee9f2 100%);
   width: 100%;
   height: 100%;
   display: flex;

@@ -173,6 +173,13 @@ const docTemplate = `{
         "v1.GetProfileResponseData": {
             "type": "object",
             "properties": {
+                "email": {
+                    "type": "string",
+                    "example": "alan"
+                },
+                "image": {
+                    "type": "string"
+                },
                 "nickname": {
                     "type": "string",
                     "example": "alan"
@@ -260,6 +267,9 @@ const docTemplate = `{
                     "type": "string",
                     "example": "1234@gmail.com"
                 },
+                "image": {
+                    "type": "string"
+                },
                 "nickname": {
                     "type": "string",
                     "example": "alan"
@@ -279,7 +289,7 @@ const docTemplate = `{
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0.0",
-	Host:             "localhost:8291",
+	Host:             "localhost:8000",
 	BasePath:         "",
 	Schemes:          []string{},
 	Title:            "Nunu Example API",
