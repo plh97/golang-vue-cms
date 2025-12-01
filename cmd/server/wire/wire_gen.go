@@ -25,10 +25,10 @@ import (
 
 // Injectors from wire.go:
 
-func NewWire(viperViper *viper.Viper, logger *log.Logger) (*app.App, func(), error) {
-	jwtJWT := jwt.NewJwt(viperViper)
+func NewWire(cfg *viper.Viper, logger *log.Logger) (*app.App, func(), error) {
+	jwtJWT := jwt.NewJwt(cfg)
 	handlerHandler := handler.NewHandler(logger)
-	db := repository.NewDB(viperViper, logger)
+	db := repository.NewDB(cfg, logger)
 	repositoryRepository := repository.NewRepository(logger, db)
 	transaction := repository.NewTransaction(repositoryRepository)
 	sidSid := sid.NewSid()
@@ -36,18 +36,26 @@ func NewWire(viperViper *viper.Viper, logger *log.Logger) (*app.App, func(), err
 	userRepository := repository.NewUserRepository(repositoryRepository)
 	userService := service.NewUserService(serviceService, userRepository)
 	userHandler := handler.NewUserHandler(handlerHandler, userService)
-	cloudflareR2, cleanup, err := aws.NewR2Client(viperViper)
+	cloudflareR2, cleanup, err := aws.NewR2Client(cfg)
 	if err != nil {
 		return nil, nil, err
 	}
 	commonService := service.NewCommonService(cloudflareR2)
 	commonHandler := handler.NewCommonHandler(handlerHandler, commonService, cloudflareR2)
+	roleRepository := repository.NewRoleRepository(repositoryRepository)
+	roleService := service.NewRoleService(serviceService, roleRepository)
+	roleHandler := handler.NewRoleHandler(handlerHandler, roleService)
+	permissionRepository := repository.NewPermissionRepository(repositoryRepository)
+	permissionService := service.NewPermissionService(serviceService, permissionRepository)
+	permissionHandler := handler.NewPermissionHandler(handlerHandler, permissionService)
 	routerDeps := router.RouterDeps{
-		Logger:        logger,
-		Config:        viperViper,
-		JWT:           jwtJWT,
-		UserHandler:   userHandler,
-		CommonHandler: commonHandler,
+		Logger:            logger,
+		Config:            cfg,
+		JWT:               jwtJWT,
+		UserHandler:       userHandler,
+		CommonHandler:     commonHandler,
+		RoleHandler:       roleHandler,
+		PermissionHandler: permissionHandler,
 	}
 	httpServer := server.NewHTTPServer(routerDeps)
 	jobJob := job.NewJob(transaction, logger, sidSid)
@@ -61,11 +69,11 @@ func NewWire(viperViper *viper.Viper, logger *log.Logger) (*app.App, func(), err
 
 // wire.go:
 
-var repositorySet = wire.NewSet(repository.NewDB, repository.NewRepository, repository.NewTransaction, repository.NewUserRepository)
+var repositorySet = wire.NewSet(repository.NewDB, repository.NewRepository, repository.NewTransaction, repository.NewUserRepository, repository.NewRoleRepository, repository.NewPermissionRepository)
 
-var serviceSet = wire.NewSet(service.NewService, service.NewUserService, service.NewCommonService)
+var serviceSet = wire.NewSet(service.NewService, service.NewUserService, service.NewRoleService, service.NewPermissionService, service.NewCommonService)
 
-var handlerSet = wire.NewSet(handler.NewHandler, handler.NewUserHandler, handler.NewCommonHandler)
+var handlerSet = wire.NewSet(handler.NewHandler, handler.NewUserHandler, handler.NewRoleHandler, handler.NewPermissionHandler, handler.NewCommonHandler)
 
 var jobSet = wire.NewSet(job.NewJob, job.NewUserJob)
 

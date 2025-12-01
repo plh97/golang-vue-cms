@@ -28,17 +28,23 @@ var repositorySet = wire.NewSet(
 	repository.NewRepository,
 	repository.NewTransaction,
 	repository.NewUserRepository,
+	repository.NewRoleRepository,
+	repository.NewPermissionRepository,
 )
 
 var serviceSet = wire.NewSet(
 	service.NewService,
 	service.NewUserService,
+	service.NewRoleService,
+	service.NewPermissionService,
 	service.NewCommonService,
 )
 
 var handlerSet = wire.NewSet(
 	handler.NewHandler,
 	handler.NewUserHandler,
+	handler.NewRoleHandler,
+	handler.NewPermissionHandler,
 	handler.NewCommonHandler,
 )
 
@@ -68,7 +74,7 @@ var awsSet = wire.NewSet(
 	aws.NewR2Client, // Wire 会自动处理 *viper.Viper 和 *log.Logger 的注入
 )
 
-func NewWire(*viper.Viper, *log.Logger) (*app.App, func(), error) {
+func NewWire(cfg *viper.Viper, logger *log.Logger) (*app.App, func(), error) {
 	panic(wire.Build(
 		repositorySet,
 		serviceSet,

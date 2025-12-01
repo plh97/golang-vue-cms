@@ -36,6 +36,12 @@ export default defineBuildConfig({
         icon: 'AppstoreOutlined',
         // icon: '/server.svg',
       },
+      {
+        name: 'role/list',
+        match: ['role/*'],
+        icon: 'UserOutlined',
+        // icon: '/user.svg',
+      },
     ],
   },
   enums: {

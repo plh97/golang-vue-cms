@@ -1,8 +1,7 @@
 package handler
 
 import (
-	"fmt"
-	"go-nunu/api/v1"
+	v1 "go-nunu/api/v1"
 	"go-nunu/internal/service"
 	"net/http"
 
@@ -101,7 +100,6 @@ func (h *UserHandler) GetProfile(ctx *gin.Context) {
 	v1.HandleSuccess(ctx, user)
 }
 
-
 // GetProfile godoc
 // @Summary 获取用户信息
 // @Schemes
@@ -141,8 +139,6 @@ func (h *UserHandler) UpdateProfile(ctx *gin.Context) {
 		v1.HandleError(ctx, http.StatusBadRequest, v1.ErrBadRequest, nil)
 		return
 	}
-
-	fmt.Printf("UpdateProfileRequest: %+v\n", req)
 
 	if err := h.userService.UpdateProfile(ctx, userId, &req); err != nil {
 		v1.HandleError(ctx, http.StatusInternalServerError, v1.ErrInternalServerError, nil)

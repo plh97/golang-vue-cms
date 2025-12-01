@@ -17,7 +17,7 @@ function handleClick() {
 <template>
   <div class="right">
     <a class="avatar-container" @click="handleClick">
-      <FAvatar :src="initialState?.image" class="avatar" alt="avatar" />
+      <FAvatar size="small" :src="initialState?.image" class="avatar" alt="avatar" />
       <span class="name">
         {{ initialState.nickname || initialState.email || initialState.userId }}
       </span>
@@ -44,8 +44,6 @@ function handleClick() {
   justify-content: center;
   cursor: pointer;
   .avatar {
-    width: 32px;
-    height: 32px;
     border-radius: 50%;
     display: inline-block;
   }
