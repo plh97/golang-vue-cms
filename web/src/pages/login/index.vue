@@ -141,7 +141,7 @@ function goRegister() {
     width: 508px;
     background-color: #fff;
     box-sizing: border-box;
-    padding: 30px 42px 70px 42px;
+    padding: 30px 42px;
     border-radius: 10px;
     box-shadow: 0 4px 64px 0 rgba(0, 0, 0, 0.05);
     border: 0.5px solid #878787;
@@ -150,7 +150,7 @@ function goRegister() {
       // width: 423px;
       width: calc(410px / 2);
       height: 57px;
-      margin-top: 57px;
+      // margin-top: 20px;
     }
 
     :global(#login .fes-input-inner) {

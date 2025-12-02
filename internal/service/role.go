@@ -8,6 +8,7 @@ import (
 
 type RoleService interface {
 	GetRole(ctx context.Context, id int64) (*model.Role, error)
+	CreateRole(ctx context.Context) (*model.Role, error)
 	GetRoleList(ctx context.Context) ([]model.Role, error)
 }
 func NewRoleService(
@@ -27,6 +28,10 @@ type roleService struct {
 
 func (s *roleService) GetRole(ctx context.Context, id int64) (*model.Role, error) {
 	return s.roleRepository.GetRole(ctx, id)
+}
+
+func (s *roleService) CreateRole(ctx context.Context) (*model.Role, error) {
+	return s.roleRepository.CreateRole(ctx)
 }
 
 

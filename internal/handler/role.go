@@ -25,12 +25,29 @@ func NewRoleHandler(
 }
 
 func (h *RoleHandler) GetRoleList(ctx *gin.Context) {
-	user, err := h.roleService.GetRoleList(ctx)
+	roleList, err := h.roleService.GetRoleList(ctx)
 	if err != nil {
 		fmt.Println("error:", err)
 		v1.HandleError(ctx, http.StatusOK, v1.ErrBadRequest, nil)
 		return
 	}
 
-	v1.HandleSuccess(ctx, user)
+	v1.HandleSuccess(ctx, roleList)
+}
+
+
+func (h *RoleHandler) CreateRole(ctx *gin.Context) {
+	var req v1.UpdateProfileRequest
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		v1.HandleError(ctx, http.StatusBadRequest, v1.ErrBadRequest, nil)
+		return
+	}
+	role, err := h.roleService.CreateRole(ctx)
+	if err != nil {
+		fmt.Println("error:", err)
+		v1.HandleError(ctx, http.StatusOK, v1.ErrBadRequest, nil)
+		return
+	}
+
+	v1.HandleSuccess(ctx, role)
 }

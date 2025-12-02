@@ -30,9 +30,7 @@ type User struct {
 	LastLoginTime   int    `gorm:"column:last_login_time;type:int;not null" json:"last_login_time"`         // 最后登录时间
 	LastLoginType   int    `gorm:"column:last_login_type;type:tinyint;not null" json:"last_login_type"`     // 最后登录类型 0游客 1微信服务号 2微信小程序
 	DeactivateTime  int    `gorm:"column:deactivate_time;type:int;not null" json:"deactivate_time"`         // 注销时间
-	// CreateTime      int                   `gorm:"column:create_time;type:int(11);not null;default 0;autoCreateTime" json:"-"` // 创建时间
-	// UpdateTime      int                   `gorm:"column:update_time;type:int(11);not null;default 0;autoUpdateTime" json:"-"` // 更新时间
-	// DeleteTime      soft_delete.DeletedAt `gorm:"column:delete_time;type:int(11);not null;default 0;" json:"-"`               // 删除时间
+	Roles           []Role `gorm:"many2many:sys_user_roles;"`                                               // role
 }
 
 func (u *User) TableName() string {

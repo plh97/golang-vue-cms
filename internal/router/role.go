@@ -14,7 +14,7 @@ func InitRoleRouter(
 	noStrictAuthRouter := r.Group("/").Use(middleware.NoStrictAuth(deps.JWT, deps.Logger))
 	{
 		noStrictAuthRouter.POST("/role/list", deps.RoleHandler.GetRoleList)
-		noStrictAuthRouter.PUT("/role", deps.UserHandler.UpdateProfile)
+		noStrictAuthRouter.PUT("/role", deps.RoleHandler.CreateRole)
 	}
 
 	// Strict permission routing group

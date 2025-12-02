@@ -7,8 +7,11 @@ import {
   FFormItem,
   FInput,
   FMessage,
+  FModal,
   FOption,
   FPagination,
+  FRadio,
+  FRadioGroup,
   FSelect,
   FTable,
   FTableColumn,
@@ -25,6 +28,13 @@ defineRouteMeta({
   title: 'Role管理',
 })
 
+// 1. Define the Form State matching your Go Model
+const createFormState = reactive({
+  name: '运营经理',
+  key: '',
+  status: 1, // Default 1: Enabled
+})
+
 const pageState = reactive({
   current_page: 1,
   page_size: 20,
@@ -38,6 +48,11 @@ const defaultValue = {
   wechat: '',
   email: '',
 }
+
+const state = reactive({
+  modal: false,
+})
+
 const searchState = reactive(defaultValue)
 const router = useRouter()
 
@@ -86,6 +101,34 @@ function handleChange(page: number, pageSize: number) {
   pageState.page_size = pageSize
   getUserProfileList()
 }
+function handleAfterEnter(e) {
+  console.log('[modal.common] handleAfterEnter, e:', e)
+}
+function handleAfterLeave(e) {
+  console.log('[modal.common] handleAfterLeave, e:', e)
+}
+// 3. Handle Create Submit
+async function handleCreateRole() {
+  try {
+    await request('/role', createFormState, { method: 'PUT' })
+    FMessage.success('创建成功')
+    state.modal = false
+    getUserProfileList() // You might want to rename this function to getRoleList later
+
+    // Reset Form
+    createFormState.name = ''
+    createFormState.key = ''
+    createFormState.status = 1
+  }
+  catch (error: any) {
+    console.error(error)
+    // FMessage is usually handled in request interceptor, but just in case
+    // FMessage.error(error.message || '创建失败')
+  }
+  finally {
+    createLoading.value = false
+  }
+}
 </script>
 
 <template>
@@ -125,6 +168,10 @@ function handleChange(page: number, pageSize: number) {
         </FFormItem>
 
         <FFormItem style="float: right" label=" ">
+          <FButton type="success" @click="state.modal = true">
+            创建
+          </FButton>
+          &nbsp;&nbsp;&nbsp;
           <FButton type="primary" @click="getUserProfileList">
             查询
           </FButton>
@@ -181,6 +228,44 @@ function handleChange(page: number, pageSize: number) {
     :page-size="pageState.page_size"
     @change="handleChange"
   />
+  <FModal
+    v-model:show="state.modal"
+    title="创建Role"
+    display-directive="show"
+    @ok="handleCreateRole"
+    @after-enter="handleAfterEnter"
+    @after-leave="handleAfterLeave"
+  >
+    <FForm
+      ref="formRef" :model="data" label-position="top" :span="12" align="flex-start"
+      class="user-profile-search-form1" @keydown.enter="getUserProfileList"
+    >
+      <FFormItem prop="name" label="角色名称:">
+        <FInput
+          v-model="createFormState.name"
+          placeholder="例如：运营经理"
+        />
+      </FFormItem>
+
+      <FFormItem prop="key" label="角色标识:">
+        <FInput
+          v-model="createFormState.key"
+          placeholder="例如：operation_manager"
+        />
+      </FFormItem>
+
+      <FFormItem prop="status" label="状态:">
+        <FRadioGroup v-model="createFormState.status">
+          <FRadio :value="1">
+            启用
+          </FRadio>
+          <FRadio :value="0">
+            禁用
+          </FRadio>
+        </FRadioGroup>
+      </FFormItem>
+    </FForm>
+  </FModal>
 </template>
 
 <style scoped lang="less">
