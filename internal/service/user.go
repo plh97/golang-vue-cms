@@ -108,14 +108,14 @@ func (s *userService) GetUserList(ctx context.Context) (*v1.GetUserListResponseD
 	if err != nil {
 		return nil, err
 	}
-	count, err1 := s.userRepo.GetUserCount(ctx)
-	if err1 != nil {
-		return nil, err1
-	}
+	// count, err1 := s.userRepo.GetUserCount(ctx)
+	// if err1 != nil {
+	// 	return nil, err1
+	// }
 
 	return &v1.GetUserListResponseData{
 		List: *user,
-		Total: count,
+		// Total: count,
 	}, nil
 }
 

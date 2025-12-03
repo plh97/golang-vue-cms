@@ -2,12 +2,16 @@ package repository
 
 import (
 	"context"
+	v1 "go-nunu/api/v1"
 	"go-nunu/internal/model"
+
+	"gorm.io/gorm"
 )
 
 type RoleRepository interface {
 	GetRole(ctx context.Context, id int64) (*model.Role, error)
-	GetRoleList(ctx context.Context) ([]model.Role, error)
+	GetRoleList(ctx context.Context, req v1.GetRoleListRequest) ([]model.Role, error)
+	GetRoleCount(ctx context.Context, req v1.GetRoleListRequest) (int, error)
 	CreateRole(ctx context.Context, role *model.Role) (*model.Role, error)
 	UpdateRole(ctx context.Context, role *model.Role) (*model.Role, error)
 }
@@ -30,24 +34,37 @@ func (r *roleRepository) GetRole(ctx context.Context, id int64) (*model.Role, er
 	return &role, nil
 }
 
-func (r *roleRepository) GetRoleList(ctx context.Context) ([]model.Role, error) {
+func (r *roleRepository) Get(ctx context.Context, param v1.GetRoleListRequest) *gorm.DB {
 	var roles []model.Role
-	err := r.db.WithContext(ctx).Preload("Permissions").Find(&roles).Error
+	db := r.db.WithContext(ctx).Model(&roles)
+	if param.PageRequest.CurrentPage > 0 {
+		db = db.Scopes(model.SetPage(*param.PageRequest))
+	}
+	return db
+}
+
+func (r *roleRepository) GetRoleList(ctx context.Context, req v1.GetRoleListRequest) ([]model.Role, error) {
+	var roles []model.Role
+	err := r.Get(ctx, req).Preload("Permissions").Find(&roles).Error
 	if err != nil {
 		return nil, err
 	}
 	return roles, nil
 }
 
+func (r *roleRepository) GetRoleCount(ctx context.Context, req v1.GetRoleListRequest) (int, error) {
+	var count int64
+	var roles []model.Role
+	err := r.db.WithContext(ctx).Model(&roles).Count(&count).Error
+	if err != nil {
+		return 0, err
+	}
+	return int(count), nil
+}
+
 // CreateRole 创建角色
-// 参数：需要把要创建的角色数据 (role) 传进来
-// 返回：error (如果创建失败)
 func (r *roleRepository) CreateRole(ctx context.Context, role *model.Role) (*model.Role, error) {
 	err := r.db.WithContext(ctx).Create(role).Error
-	// err := r.DB(ctx).
-	// 	Model(&role).
-	// 	Association("Permissions").
-	// 	Replace(role.Permissions) // 传入的是完整的 Permission 实体数组 (可能为空)
 	return role, err
 }
 

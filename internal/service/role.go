@@ -12,7 +12,7 @@ import (
 type RoleService interface {
 	GetRole(ctx context.Context, id int64) (*model.Role, error)
 	CreateRole(ctx context.Context, req v1.CreateRoleRequest) (*model.Role, error)
-	GetRoleList(ctx context.Context) ([]model.Role, error)
+	GetRoleList(ctx context.Context, req v1.GetRoleListRequest) ([]model.Role, int, error)
 	UpdateRolePermissions(ctx context.Context, roleId int64, permissionIds []uint) error
 }
 
@@ -36,22 +36,36 @@ func (s *roleService) GetRole(ctx context.Context, id int64) (*model.Role, error
 }
 
 func (s *roleService) CreateRole(ctx context.Context, req v1.CreateRoleRequest) (*model.Role, error) {
-
-	var permissions []model.Permission
-	for _, id := range req.PermissionIds {
-		permissions = append(permissions, model.Permission{ID: uint(id)})
-	}
 	role := &model.Role{
-		Name:        req.Name,
-		Key:         req.Key,
-		Status:      req.Status,
-		Permissions: permissions,
+		Name:   req.Name,
+		Key:    req.Key,
+		Status: req.Status,
 	}
-	return s.roleRepository.CreateRole(ctx, role)
+	role, err := s.roleRepository.CreateRole(ctx, role)
+	if err != nil {
+		return nil, err
+	}
+	err = s.UpdateRolePermissions(
+		ctx,
+		int64(role.ID),
+		req.PermissionIds,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return role, err
 }
 
-func (s *roleService) GetRoleList(ctx context.Context) ([]model.Role, error) {
-	return s.roleRepository.GetRoleList(ctx)
+func (s *roleService) GetRoleList(ctx context.Context, req v1.GetRoleListRequest) ([]model.Role, int, error) {
+	roles, err := s.roleRepository.GetRoleList(ctx, req)
+	if err != nil {
+		return nil, 0, err
+	}
+	count, err1 := s.roleRepository.GetRoleCount(ctx, req)
+	if err1 != nil {
+		return roles, 0, err
+	}
+	return roles, count, nil
 }
 
 func (s *roleService) UpdateRolePermissions(ctx context.Context, roleID int64, permissionIDs []uint) error {

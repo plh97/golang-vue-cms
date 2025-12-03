@@ -21,7 +21,7 @@ import { reactive, ref, watch } from 'vue'
 import { useRequest } from 'vue-hooks-plus'
 import { request } from '@/api'
 import { formatTimestamp } from '@/common/utils'
-import { GENDER, LOGIN_TYPE } from '@/enums'
+import { LOGIN_TYPE } from '@/enums'
 
 defineRouteMeta({
   name: 'role/list',
@@ -38,7 +38,7 @@ const createFormState = reactive({
 
 const pageState = reactive({
   current_page: 1,
-  page_size: 20,
+  page_size: 10,
   total: 0,
 })
 
@@ -89,25 +89,19 @@ function reqUserProfile() {
     FMessage.error('ID 不合法')
     return Promise.reject(new Error('id invalid'))
   }
-  const data = {
+  return request('/role/list', {
     id: +searchState.id,
     name: searchState.name,
     bind_type: searchState.bind_type,
-    page: {
-      current_page: pageState.current_page,
-      page_count: 0,
-      page_size: pageState.page_size, // 获取全部活动
-      total: 0,
-    },
-  }
-  return request('/role/list', data)
+    ...pageState,
+  })
 }
 
 const {
   loading,
   data,
   run: getRoleList,
-} = useRequest<{ list: IUserProfile[], page: { total: number } }>(
+} = useRequest<{ list: IUserProfile[], total: number }>(
   reqUserProfile,
 )
 
@@ -245,7 +239,7 @@ async function handlePermissionChange(roleId: number, newPermIds: number[]) {
     </FTableColumn>
   </FTable>
   <FPagination
-    v-if="!loadingOnce" class="pagination" show-total :total-count="data?.page?.total" show-size-changer
+    v-if="!loadingOnce" class="pagination" show-total :total-count="data?.total" show-size-changer
     show-quick-jumper :page-size="pageState.page_size" @change="handleChange"
   />
   <FModal v-model:show="state.modal" title="创建Role" display-directive="show" @ok="handleCreateRole">

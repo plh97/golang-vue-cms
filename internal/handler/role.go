@@ -25,7 +25,12 @@ func NewRoleHandler(
 }
 
 func (h *RoleHandler) GetRoleList(ctx *gin.Context) {
-	roleList, err := h.roleService.GetRoleList(ctx)
+	var req v1.GetRoleListRequest
+	if err := ctx.ShouldBindQuery(&req); err != nil {
+		v1.HandleError(ctx, http.StatusBadRequest, v1.ErrBadRequest, nil)
+		return
+	}
+	roleList, count, err := h.roleService.GetRoleList(ctx, req)
 	if err != nil {
 		v1.HandleError(ctx, http.StatusOK, v1.ErrBadRequest, nil)
 		return
@@ -33,6 +38,9 @@ func (h *RoleHandler) GetRoleList(ctx *gin.Context) {
 
 	v1.HandleSuccess(ctx, v1.GetRoleListResponseData{
 		List: roleList,
+		PageResponse: v1.PageResponse{
+			Total: count,
+		},
 	})
 }
 
