@@ -23,7 +23,7 @@ const ctxTxKey = "TxKey"
 type Repository struct {
 	db     *gorm.DB
 	logger *log.Logger
-	e      *casbin.Enforcer
+	e      *casbin.CachedEnforcer
 	//rdb    *redis.Client
 	//mongo  *mongo.Client
 }
@@ -31,7 +31,7 @@ type Repository struct {
 func NewRepository(
 	logger *log.Logger,
 	db *gorm.DB,
-	e *casbin.Enforcer,
+	e *casbin.CachedEnforcer,
 	// rdb *redis.Client,
 	//
 	//	mongo *mongo.Client,

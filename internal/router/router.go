@@ -13,7 +13,7 @@ type RouterDeps struct {
 	Logger            *log.Logger
 	Config            *viper.Viper
 	JWT               *jwt.JWT
-	Casbin            *casbin.Enforcer
+	Casbin            *casbin.CachedEnforcer
 	UserHandler       *handler.UserHandler
 	CommonHandler     *handler.CommonHandler
 	RoleHandler       *handler.RoleHandler

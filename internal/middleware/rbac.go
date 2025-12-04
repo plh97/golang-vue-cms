@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func check(e *casbin.Enforcer, sub, obj, act string) {
+func Check(e *casbin.CachedEnforcer, sub, obj, act string) {
 	ok, _ := e.Enforce(sub, obj, act)
 	if ok {
 		fmt.Printf("%s CAN %s %s\n", sub, act, obj)
@@ -16,12 +16,13 @@ func check(e *casbin.Enforcer, sub, obj, act string) {
 	}
 }
 
-func AuthMiddleware(e *casbin.Enforcer) gin.HandlerFunc {
+func AuthMiddleware(e *casbin.CachedEnforcer) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// method := c.Request.Method
-		check(e, "zhangsan", "/index", "GET")
-		e.AddRoleForUser("wangwu", "admin")
-		check(e, "wangwu", "/index", "GET")
+		e.AddPolicy("admin", "/user", "GET")
+		e.AddRoleForUser("zhangsan", "admin")
+		Check(e, "zhangsan", "/user", "GET")
+		Check(e, "zhangsan", "/user", "POST")
 		c.Next()
 	}
 }

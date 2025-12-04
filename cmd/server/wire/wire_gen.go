@@ -28,10 +28,10 @@ import (
 
 func NewWire(cfg *viper.Viper, logger *log.Logger) (*app.App, func(), error) {
 	jwtJWT := jwt.NewJwt(cfg)
-	enforcer := casbinPkg.NewEnforcer()
-	handlerHandler := handler.NewHandler(logger)
 	db := repository.NewDB(cfg, logger)
-	repositoryRepository := repository.NewRepository(logger, db, enforcer)
+	cachedEnforcer := casbinPkg.NewEnforcer(db)
+	handlerHandler := handler.NewHandler(logger)
+	repositoryRepository := repository.NewRepository(logger, db, cachedEnforcer)
 	transaction := repository.NewTransaction(repositoryRepository)
 	sidSid := sid.NewSid()
 	serviceService := service.NewService(db, transaction, logger, sidSid, jwtJWT)
@@ -54,7 +54,7 @@ func NewWire(cfg *viper.Viper, logger *log.Logger) (*app.App, func(), error) {
 		Logger:            logger,
 		Config:            cfg,
 		JWT:               jwtJWT,
-		Casbin:            enforcer,
+		Casbin:            cachedEnforcer,
 		UserHandler:       userHandler,
 		CommonHandler:     commonHandler,
 		RoleHandler:       roleHandler,
