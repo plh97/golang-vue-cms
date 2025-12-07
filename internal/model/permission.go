@@ -1,9 +1,9 @@
 package model
 
-type Permission struct {
-	BaseModel
-	ID uint `gorm:"column:id;type:int;autoIncrement;primaryKey" json:"id"`
+import "gorm.io/gorm"
 
+type Permission struct {
+	gorm.Model
 	// 2. 树形结构支持 (核心)
 	// ParentID 用于生成左侧菜单树 (Tree Structure)
 	// 0 表示顶级目录

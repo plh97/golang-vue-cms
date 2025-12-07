@@ -56,7 +56,7 @@ func NewHTTPServer(
 		middleware.ResponseLogMiddleware(deps.Logger),
 		middleware.RequestLogMiddleware(deps.Logger),
 		//middleware.SignMiddleware(log),
-		middleware.AuthMiddleware(deps.Casbin),
+		// middleware.AuthMiddleware(deps.Casbin),
 	)
 	s.GET("/", func(ctx *gin.Context) {
 		deps.Logger.WithContext(ctx).Info("hello")

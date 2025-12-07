@@ -34,7 +34,7 @@ func (h *PermissionHandler) GetPermissionList(ctx *gin.Context) {
 	}
 	permissionList, count, err := h.permissionService.GetPermissionList(ctx, req)
 	if err != nil {
-		v1.HandleError(ctx, http.StatusOK, v1.ErrBadRequest, nil)
+		v1.HandleError(ctx, http.StatusBadRequest, v1.ErrBadRequest, nil)
 		return
 	}
 
@@ -55,7 +55,7 @@ func (h *PermissionHandler) CreatePermission(ctx *gin.Context) {
 	permission, err := h.permissionService.CreatePermission(ctx, req)
 	if err != nil {
 		fmt.Println("error:", err)
-		v1.HandleError(ctx, http.StatusOK, v1.ErrBadRequest, nil)
+		v1.HandleError(ctx, http.StatusBadRequest, v1.ErrBadRequest, nil)
 		return
 	}
 

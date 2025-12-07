@@ -221,20 +221,20 @@ async function handlePermissionChange(roleId: number, newPermIds: number[]) {
     v-show="!loading" always-scrollbar class="table" :height="10" size="small" row-key="id"
     :data="data?.list ?? []"
   >
-    <FTableColumn fixed="left" prop="id" label="ID" :width="60" />
+    <FTableColumn fixed="left" prop="ID" label="ID" :width="60" />
     <FTableColumn prop="name" label="角色名称" :min-width="150" />
     <FTableColumn label="权限分配/操作" :min-width="350">
       <template #default="{ row }">
         <FSelect
-          multiple filterable placeholder="分配权限" :model-value="row.permissions?.map((p: any) => p.id)"
-          :options="allPermissions" value-field="id" label-field="name"
-          @change="(newIds: number[]) => handlePermissionChange(row.id, newIds)"
+          multiple filterable placeholder="分配权限" :model-value="row.permissions?.map((p: any) => p.ID)"
+          :options="allPermissions" value-field="ID" label-field="name"
+          @change="(newIds: number[]) => handlePermissionChange(row.ID, newIds)"
         />
       </template>
     </FTableColumn>
-    <FTableColumn :min-width="163" prop="created_at" label="创建时间">
+    <FTableColumn :min-width="163" prop="CreatedAt" label="创建时间">
       <template #default="{ row }">
-        {{ formatTimestamp(row.created_at) }}
+        {{ formatTimestamp(row.CreatedAt) }}
       </template>
     </FTableColumn>
   </FTable>

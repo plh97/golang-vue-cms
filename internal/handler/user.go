@@ -42,7 +42,7 @@ func (h *UserHandler) Register(ctx *gin.Context) {
 
 	if err := h.userService.Register(ctx, req); err != nil {
 		h.logger.WithContext(ctx).Error("userService.Register error", zap.Error(err))
-		v1.HandleError(ctx, http.StatusOK, err, nil)
+		v1.HandleError(ctx, http.StatusInternalServerError, err, nil)
 		return
 	}
 
@@ -92,13 +92,13 @@ func (h *UserHandler) Login(ctx *gin.Context) {
 func (h *UserHandler) GetProfile(ctx *gin.Context) {
 	userId := GetUserIdFromCtx(ctx)
 	if userId == "" {
-		v1.HandleError(ctx, http.StatusOK, v1.ErrUnauthorized, nil)
+		v1.HandleError(ctx, http.StatusUnauthorized, v1.ErrUnauthorized, nil)
 		return
 	}
 
 	user, err := h.userService.GetProfile(ctx, userId)
 	if err != nil {
-		v1.HandleError(ctx, http.StatusOK, v1.ErrBadRequest, nil)
+		v1.HandleError(ctx, http.StatusBadRequest, v1.ErrBadRequest, nil)
 		return
 	}
 
@@ -119,7 +119,7 @@ func (h *UserHandler) GetProfile(ctx *gin.Context) {
 func (h *UserHandler) GetUserList(ctx *gin.Context) {
 	user, err := h.userService.GetUserList(ctx)
 	if err != nil {
-		v1.HandleError(ctx, http.StatusOK, v1.ErrBadRequest, nil)
+		v1.HandleError(ctx, http.StatusBadRequest, v1.ErrBadRequest, nil)
 		return
 	}
 

@@ -172,9 +172,9 @@ async function handleCreatePermission() {
   <div v-if="loading" class="loading">
     <LoadingOutlined class="icon" />
   </div>
-  <FTable v-show="!loading" always-scrollbar class="table" :height="10" size="small" row-key="id"
+  <FTable v-show="!loading" always-scrollbar class="table" :height="10" size="small" row-key="ID"
     :data="data?.list ?? []">
-    <FTableColumn fixed="left" prop="id" label="权限ID" :min-width="60" />
+    <FTableColumn fixed="left" prop="ID" label="ID" :min-width="60" />
     <FTableColumn prop="name" label="权限名称" :min-width="120" />
     <FTableColumn prop="key" label="唯一标识" :min-width="150" />
 
@@ -187,9 +187,9 @@ async function handleCreatePermission() {
     <FTableColumn prop="api" label="API路径/组件" :min-width="200" />
     <FTableColumn prop="method" label="方法" :min-width="80" />
 
-    <FTableColumn :min-width="163" prop="created_at" label="创建时间">
+    <FTableColumn :min-width="163" prop="CreatedAt" label="创建时间">
       <template #default="{ row }">
-        {{ formatTimestamp(row.created_at) }}
+        {{ formatTimestamp(row.CreatedAt) }}
       </template>
     </FTableColumn>
   </FTable>

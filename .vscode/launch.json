@@ -2,15 +2,25 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Launch Server API (Debug)",
+            "name": "Debug Nunu Server",
             "type": "go",
             "request": "launch",
-            "mode": "debug", // 确保是 debug，自动编译
-            "program": "${workspaceFolder}/cmd/server/main.go", 
-            "args": [
-            ],
-            // 确保工作目录是项目根目录，以便正确加载配置文件
-            "cwd": "${workspaceFolder}"
+            "mode": "auto",
+            // 1. 核心：指向 Nunu 的入口目录 (通常是 cmd/server)
+            "program": "${workspaceFolder}/cmd/server",
+            
+            // 2. 核心：设置工作目录为项目根目录
+            // 这样代码里的 viper.AddConfigPath("config") 才能找到 config/local.yml
+            "cwd": "${workspaceFolder}",
+            
+            // 3. (可选) 如果你的启动命令需要参数，可以在这里加
+            // "args": ["-conf", "config/local.yml"], 
+            
+            "env": {
+                // 如果需要设置环境变量，可以在这里加
+                "GIN_MODE": "debug" 
+            },
+            "showLog": true
         }
     ]
 }

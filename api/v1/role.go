@@ -18,6 +18,11 @@ type GetRoleListRequest struct {
 	ID   int    `json:"id" form:"id"`
 }
 
+type RoleInfo struct {
+	model.Role
+	Permissions []model.Permission `json:"permissions"`
+}
+
 type GetRoleListResponseData struct {
 	api.PageResponse
 	List []model.Role `json:"list"`
@@ -29,7 +34,7 @@ type GetRoleListResponse struct {
 }
 
 type UpdateRolePermissionsRequest struct {
-	ID            int64  `json:"id"`
+	ID            int  `json:"id"`
 	PermissionIds []uint `json:"permission_ids"`
 }
 type CreateRoleResponse struct {

@@ -56,10 +56,15 @@ export async function request(url: string, data: Record<string, any> = {}, optio
 
   // 3. 🚀 FETCH CALL (Using the potentially modified finalUrl)
   return fetch(finalUrl, config).then(async (response) => {
+    const data = await response.json();
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`)
+      const errorMessage = `${response.status}! ${data.message ?? ''}`
+      FMessage.error({
+        content: errorMessage,
+      })
+      return Promise.reject(new Error(errorMessage))// filepath: /Users/plh/code/golang-tutorial/web/src/api.ts
     }
-    return response.json()
+    return data
   }).then((data) => {
     // 处理响应内容异常
     if (data?.code === 2000) {

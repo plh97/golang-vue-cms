@@ -44,7 +44,7 @@ func (h *RoleHandler) GetRoleList(ctx *gin.Context) {
 	}
 	roleList, count, err := h.roleService.GetRoleList(ctx, req)
 	if err != nil {
-		v1.HandleError(ctx, http.StatusOK, v1.ErrBadRequest, nil)
+		v1.HandleError(ctx, http.StatusBadRequest, v1.ErrBadRequest, nil)
 		return
 	}
 
@@ -65,7 +65,7 @@ func (h *RoleHandler) CreateRole(ctx *gin.Context) {
 	role, err := h.roleService.CreateRole(ctx, req)
 	if err != nil {
 		fmt.Println("error:", err)
-		v1.HandleError(ctx, http.StatusOK, v1.ErrBadRequest, nil)
+		v1.HandleError(ctx, http.StatusBadRequest, v1.ErrBadRequest, nil)
 		return
 	}
 
@@ -84,7 +84,7 @@ func (h *RoleHandler) UpdateRolePermissions(ctx *gin.Context) {
 	// For example:
 	err := h.roleService.UpdateRolePermissions(ctx, req.ID, req.PermissionIds)
 	if err != nil {
-		v1.HandleError(ctx, http.StatusOK, v1.ErrBadRequest, nil)
+		v1.HandleError(ctx, http.StatusBadRequest, v1.ErrBadRequest, nil)
 		return
 	}
 

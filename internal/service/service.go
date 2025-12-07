@@ -7,10 +7,12 @@ import (
 	"go-nunu/pkg/log"
 	"go-nunu/pkg/sid"
 
+	"github.com/casbin/casbin/v2"
 	"gorm.io/gorm"
 )
 
 type Service struct {
+	Casbin *casbin.CachedEnforcer
 	db     *gorm.DB
 	logger *log.Logger
 	sid    *sid.Sid

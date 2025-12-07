@@ -11,7 +11,10 @@ func InitPermissionRouter(
 	r *gin.RouterGroup,
 ) {
 	// Non-strict permission routing group
-	noStrictAuthRouter := r.Group("/").Use(middleware.NoStrictAuth(deps.JWT, deps.Logger))
+	noStrictAuthRouter := r.Group("/").Use(
+		middleware.NoStrictAuth(deps.JWT, deps.Logger),
+		middleware.AuthMiddleware(deps.Casbin),
+	)
 	{
 		noStrictAuthRouter.GET("/permission/list", deps.PermissionHandler.GetPermissionList)
 		noStrictAuthRouter.POST("/permission", deps.PermissionHandler.CreatePermission)

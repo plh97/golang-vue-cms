@@ -1,7 +1,6 @@
 package model
 
 import (
-	"fmt"
 	"go-nunu/api"
 	"time"
 
@@ -24,8 +23,6 @@ func Paginate(param api.PageRequest) func(db *gorm.DB) *gorm.DB {
 			page = 1
 		}
 		offset := (page - 1) * param.PageSize
-		fmt.Println("++++++++", offset)
-		fmt.Println("++++++++", param.PageSize)
 		return db.Offset(offset).Limit(param.PageSize)
 	}
 }

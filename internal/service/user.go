@@ -154,7 +154,7 @@ func (s *userService) UpdateUser(ctx context.Context, req *v1.UpdateUserRequest)
 
 	var roles []model.Role
 	for _, id := range req.RoleIds {
-		roles = append(roles, model.Role{ID: uint(id)})
+		roles = append(roles, model.Role{Model: gorm.Model{ID: uint(id)}})
 	}
 
 	if req.Email != "" {

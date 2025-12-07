@@ -45,7 +45,7 @@ func NewWire(cfg *viper.Viper, logger *log.Logger) (*app.App, func(), error) {
 	commonService := service.NewCommonService(cloudflareR2)
 	commonHandler := handler.NewCommonHandler(handlerHandler, commonService, cloudflareR2)
 	roleRepository := repository.NewRoleRepository(repositoryRepository)
-	roleService := service.NewRoleService(serviceService, roleRepository)
+	roleService := service.NewRoleService(serviceService, roleRepository, *cachedEnforcer)
 	roleHandler := handler.NewRoleHandler(handlerHandler, roleService)
 	permissionRepository := repository.NewPermissionRepository(repositoryRepository)
 	permissionService := service.NewPermissionService(serviceService, permissionRepository)
