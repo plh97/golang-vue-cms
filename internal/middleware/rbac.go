@@ -44,6 +44,8 @@ func AuthMiddleware(e *casbin.CachedEnforcer) gin.HandlerFunc {
 
 		// 检查权限
 		allowed, err := e.Enforce(sub, obj, act)
+		// allowed, err = e.Enforce("1", "api:/v1/profile", "GET")
+		// allowed, err = e.Enforce("1", "api:/v1/admin/user", "GET")
 		if err != nil {
 			v1.HandleError(ctx, http.StatusForbidden, v1.ErrForbidden, nil)
 			ctx.Abort()

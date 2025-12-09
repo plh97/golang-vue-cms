@@ -182,8 +182,8 @@ function handleChange(page: number, pageSize: number) {
     <FTableColumn label="角色分配" :min-width="250">
       <template #default="{ row }">
         <FSelect
-          multiple filterable placeholder="分配用户角色" :model-value="row.roles?.map(r => r.id)"
-          :options="allRoles ?? []" value-field="id" label-field="name"
+          multiple filterable placeholder="分配用户角色" :model-value="row.roles?.map(r => r.ID)"
+          :options="allRoles ?? []" value-field="ID" label-field="name"
           @change="(newIds: number[]) => handleUserRoleChange(row.user_id, newIds)"
         />
       </template>

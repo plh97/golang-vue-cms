@@ -12,6 +12,7 @@ import (
 	"go-nunu/internal/repository"
 	"go-nunu/internal/server"
 	"go-nunu/pkg/app"
+	"go-nunu/pkg/casbin"
 	"go-nunu/pkg/log"
 )
 
@@ -19,7 +20,8 @@ import (
 
 func NewWire(viperViper *viper.Viper, logger *log.Logger) (*app.App, func(), error) {
 	db := repository.NewDB(viperViper, logger)
-	migrateServer := server.NewMigrateServer(db, logger)
+	cachedEnforcer := casbinPkg.NewEnforcer(db)
+	migrateServer := server.NewMigrateServer(db, logger, cachedEnforcer)
 	appApp := newApp(migrateServer)
 	return appApp, func() {
 	}, nil
@@ -37,3 +39,6 @@ func newApp(
 ) *app.App {
 	return app.NewApp(app.WithServer(migrateServer), app.WithName("demo-migrate"))
 }
+
+// 添加 Casbin 提供者
+var casbinSet = wire.NewSet(casbinPkg.NewEnforcer)

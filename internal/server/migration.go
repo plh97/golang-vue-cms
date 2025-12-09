@@ -6,20 +6,23 @@ import (
 	"go-nunu/pkg/log"
 	"os"
 
+	"github.com/casbin/casbin/v2"
 	"go.uber.org/zap"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
 
 type MigrateServer struct {
-	db  *gorm.DB
-	log *log.Logger
+	db     *gorm.DB
+	log    *log.Logger
+	casbin *casbin.CachedEnforcer
 }
 
-func NewMigrateServer(db *gorm.DB, log *log.Logger) *MigrateServer {
+func NewMigrateServer(db *gorm.DB, log *log.Logger, casbin *casbin.CachedEnforcer) *MigrateServer {
 	return &MigrateServer{
-		db:  db,
-		log: log,
+		db:     db,
+		log:    log,
+		casbin: casbin,
 	}
 }
 func (m *MigrateServer) Start(ctx context.Context) error {
@@ -38,6 +41,10 @@ func (m *MigrateServer) Start(ctx context.Context) error {
 	}
 	if err := m.initAdminUser(); err != nil {
 		m.log.Error("initAdminUser error", zap.Error(err))
+		return err
+	}
+	if err := m.initRBAC(); err != nil {
+		m.log.Error("initRBAC error", zap.Error(err))
 		return err
 	}
 	m.log.Info("AutoMigrate success")
@@ -61,4 +68,12 @@ func (m *MigrateServer) initAdminUser() error {
 		Email:     "admin@gmail.com",
 		Name:      "Administrator",
 	}).Error
+}
+
+func (m *MigrateServer) initRBAC() error {
+	_, err := m.casbin.AddPermissionForUser("admin", model.ApiResourcePrefix+"/v1/profile", "GET")
+	// _, err = m.casbin.AddPermissionForUser("admin", model.ApiResourcePrefix+"/v1/user/list", "POST")
+	_, err = m.casbin.AddPermissionForUser("admin", model.ApiResourcePrefix+"/v1/role/list", "GET")
+	_, err = m.casbin.AddPermissionForUser("admin", model.ApiResourcePrefix+"/v1/permission/list", "GET")
+	return err
 }
