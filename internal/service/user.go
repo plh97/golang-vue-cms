@@ -170,7 +170,7 @@ func (s *userService) UpdateUser(ctx context.Context, req *v1.UpdateUserRequest)
 		if err := tx.Model(&user).Association("Roles").Replace(&roles); err != nil {
 			return err
 		}
-		if err = s.userRepo.Update(ctx, user); err != nil {
+		if err = tx.Save(&user).Error; err != nil {
 			return err
 		}
 		// 4. 返回 nil 提交事务

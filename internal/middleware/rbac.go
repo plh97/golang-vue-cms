@@ -33,8 +33,8 @@ func AuthMiddleware(e *casbin.CachedEnforcer) gin.HandlerFunc {
 		uid := v.(*jwt.MyCustomClaims).UserId
 		if convertor.ToString(uid) == model.AdminUserID {
 			// 防呆设计，超管跳过API权限检查
-			ctx.Next()
-			return
+			// ctx.Next()
+			// return
 		}
 		// TODO: 这里可以根据需要添加更多的上下文信息，例如用户角色等
 		// 获取请求的资源和操作

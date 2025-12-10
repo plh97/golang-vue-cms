@@ -2,6 +2,18 @@ package model
 
 import "gorm.io/gorm"
 
+const (
+	PermissionTypeDirectory = 1 // 目录
+	PermissionTypeMenu      = 2 // 菜单
+	PermissionTypeButton    = 3 // 按钮/API
+)
+
+const (
+	ApiResourcePrefix = "api:"
+	MenuResourcePrefix = "menu:"
+	DirectoryResourcePrefix = "dir:"
+)
+
 type Permission struct {
 	gorm.Model
 	// 2. 树形结构支持 (核心)

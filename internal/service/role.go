@@ -110,7 +110,14 @@ func (s *roleService) UpdateRolePermissions(ctx context.Context, roleID int64, p
 				continue
 			}
 			// 对应 Casbin 规则: p, role_key, path, method
-			rules = append(rules, []string{sub, perm.Path, perm.Method})
+			switch perm.Type {
+			case model.PermissionTypeDirectory:
+				rules = append(rules, []string{sub, model.DirectoryResourcePrefix + perm.Api, perm.Method})
+			case model.PermissionTypeMenu:
+				rules = append(rules, []string{sub, model.MenuResourcePrefix + perm.Api, perm.Method})
+			case model.PermissionTypeButton:
+				rules = append(rules, []string{sub, model.ApiResourcePrefix + perm.Api, perm.Method})
+			}
 		}
 
 		if len(rules) > 0 {

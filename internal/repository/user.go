@@ -57,7 +57,7 @@ func (r *userRepository) GetByID(ctx context.Context, userId string) (*model.Use
 
 func (r *userRepository) GetUserList(ctx context.Context) (*[]model.User, error) {
 	var user []model.User
-	if err := r.DB(ctx).Find(&user).Error; err != nil {
+	if err := r.DB(ctx).Preload("Roles").Find(&user).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, v1.ErrNotFound
 		}
