@@ -1,0 +1,42 @@
+---
+- hosts: aws
+  # user: ubuntu
+  # gather_facts: False
+  remote_user: ubuntu
+  become: yes
+  become_method: sudo
+  tasks:
+    - name: Get running containers
+      docker_host_info:
+        containers: yes
+      register: docker_info
+    # - name: Stop running containers
+    #   docker_container:
+    #     name: "{{ item }}"
+    #     state: stopped
+    #   loop: "{{ docker_info.containers | map(attribute='Id') | list }}"
+    # - name: Delete content & directory
+    #   file:
+    #     state: absent
+    #     path: ~/make-appointment/
+    - name: pull latest code on main branch
+      git:
+        repo: https://github.com/plh97/make-appointment.git
+        dest: ~/make-appointment
+        force: true
+        version: main
+
+    - name: install dependences
+      command:
+        cmd: pnpm run bootstrap
+        chdir: ~/make-appointment
+
+    # - name: build
+    #   command:
+    #     chdir: ~/make-appointment
+    #     cmd: npm run build
+
+    - name: deploy
+      command:
+        chdir: ~/make-appointment
+        cmd: npm run db -d

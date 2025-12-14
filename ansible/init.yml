@@ -1,0 +1,55 @@
+---
+- hosts: aws
+  # user: ubuntu
+  # gather_facts: False
+  remote_user: ubuntu
+  become: yes
+  become_method: sudo
+  tasks:
+    - name: Get running containers
+      docker_host_info:
+        containers: yes
+      register: docker_info
+
+    - name: Stop running containers
+      docker_container:
+        name: "{{ item }}"
+        state: stopped
+      loop: "{{ docker_info.containers | map(attribute='Id') | list }}"
+    - name: Delete content & directory
+      file:
+        state: absent
+        path: ~/make-appointment/
+    - name: Clone Repository
+      git:
+        repo: https://github.com/plh97/make-appointment.git
+        dest: ~/make-appointment
+        clone: yes
+        update: yes
+        version: main
+
+    - name: remove unused workspace
+      command:
+        chdir: ~/make-appointment
+        cmd: rm -rf ~/make-appointment/packages/frontend
+    - name: remove unused workspace
+      command:
+        chdir: ~/make-appointment
+        cmd: rm -rf ~/make-appointment/packages/core
+    # - name: install dependences
+    #   command:
+    #     cmd: pnpm i --frozen-lockfile
+    #     chdir: ~/make-appointment
+    - name: deploy
+      command:
+        chdir: ~/make-appointment
+        cmd: docker compose up -d
+    - name: install dependences
+      command:
+        cmd: pnpm i --frozen-lockfile
+        chdir: ~/make-appointment
+    - name: deploy
+      command:
+        chdir: ~/make-appointment
+        cmd: pnpm -F backend run serve
+...

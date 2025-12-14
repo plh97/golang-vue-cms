@@ -1,0 +1,7 @@
+Host aws
+  HostName 13.229.147.97
+  # HostKeyAlias ewq
+  IdentityFile ~/.ssh/make-appointment-aws-key.pem
+  CheckHostIP no
+  Port 22
+  User ubuntu
