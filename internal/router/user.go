@@ -16,21 +16,16 @@ func InitUserRouter(
 		noAuthRouter.POST("/register", deps.UserHandler.Register)
 		noAuthRouter.POST("/login", deps.UserHandler.Login)
 	}
-	// Non-strict permission routing group
+	// Protected routes requiring JWT and RBAC
 
-	noStrictAuthRouter := r.Group("/").Use(
-		middleware.NoStrictAuth(deps.JWT, deps.Logger),
+	protectedRouter := r.Group("/").Use(
+		middleware.StrictAuth(deps.JWT, deps.Logger),
 		middleware.AuthMiddleware(deps.Casbin),
 	)
 	{
-		noStrictAuthRouter.GET("/profile", deps.UserHandler.GetProfile)
-		noStrictAuthRouter.POST("/user/list", deps.UserHandler.GetUserList)
-		noStrictAuthRouter.PUT("/profile", deps.UserHandler.UpdateProfile)
-		noStrictAuthRouter.PUT("/user", deps.UserHandler.UpdateUser)
+		protectedRouter.GET("/profile", deps.UserHandler.GetProfile)
+		protectedRouter.POST("/user/list", deps.UserHandler.GetUserList)
+		protectedRouter.PUT("/profile", deps.UserHandler.UpdateProfile)
+		protectedRouter.PUT("/user", deps.UserHandler.UpdateUser)
 	}
-
-	// Strict permission routing group
-	// strictAuthRouter := r.Group("/").Use(middleware.StrictAuth(deps.JWT, deps.Logger))
-	// {
-	// }
 }

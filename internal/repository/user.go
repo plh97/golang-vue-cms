@@ -77,7 +77,7 @@ func (r *userRepository) GetUserCount(ctx context.Context) (int, error) {
 
 func (r *userRepository) GetByEmail(ctx context.Context, email string) (*model.User, error) {
 	var user model.User
-	if err := r.DB(ctx).Where("email = ?", email).First(&user).Error; err != nil {
+	if err := r.DB(ctx).Where("email = ?", email).Preload("Roles").First(&user).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil
 		}

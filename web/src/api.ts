@@ -1,90 +1,95 @@
+import { emit, on } from './event'
+import axios, { type AxiosError, type AxiosRequestConfig, type AxiosResponse, type AxiosRequestHeaders, type InternalAxiosRequestConfig, type Method } from 'axios'
 import { FMessage } from '@fesjs/fes-design'
-import { setToken } from './common/utils'
 import { baseURL } from './config'
+import { setToken } from './common/utils'
 
-// Helper function to convert an object into a query string
-function toQueryString(data: Record<string, any>): string {
-  const params = new URLSearchParams()
-  for (const key in data) {
-    if (Object.prototype.hasOwnProperty.call(data, key) && data[key] !== undefined && data[key] !== null) {
-      params.append(key, data[key])
-    }
-  }
-  const queryString = params.toString()
-  return queryString ? `?${queryString}` : ''
+interface ApiErrorPayload {
+  message?: string
+  code?: number
+  [key: string]: any
 }
 
-export async function request(url: string, data: Record<string, any> = {}, options: any = {}) {
-  const config: RequestInit = {
-    method: options.method || 'GET',
-    headers: {
-      // 'Token': getToken() ?? '',
-      'Content-Type': 'application/json',
-      ...(options.headers ?? {}),
-    },
-    credentials: 'include',
+on('unlogin', (payload: ApiErrorPayload) => {
+  FMessage.error({ content: `[${payload.code ?? 2000}] ${payload.message || '未登录或登录已过期，请重新登录'}` })
+  setToken('')
+  location.replace('/login')
+})
+on('error', (payload: ApiErrorPayload) => {
+  if (payload.message) FMessage.error({ content: `[${payload.code ?? 500}] ${payload.message}` })
+})
+
+// Simple cookie reader to fetch accessToken for Authorization header
+function getAccessToken(): string {
+  const match = document.cookie.split('; ').find((row) => row.startsWith('accessToken='))
+  return match ? decodeURIComponent(match.split('=')[1]) : ''
+}
+
+const api = axios.create({
+  baseURL: `${baseURL}/v1`,
+  withCredentials: true,
+})
+
+api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
+  const token = getAccessToken()
+  if (token) {
+    // backend StrictAuth expects the raw token in Authorization header
+    config.headers = {
+      ...(config.headers || {}),
+      Authorization: token,
+    } as AxiosRequestHeaders
+  }
+  return config
+})
+
+api.interceptors.response.use(
+  (response: AxiosResponse) => response,
+  (error: AxiosError) => {
+    const status = error.response?.status
+    const respData = (error.response?.data ?? {}) as { message?: string; code?: number }
+    const msg = respData.message || error.message || 'Request failed'
+    const code = respData.code || status || 500
+    const payload: ApiErrorPayload = { message: msg, code, ...respData }
+    if (status === 401) {
+      emit('unlogin', payload)
+    } else {
+      emit('error', payload)
+    }
+    return Promise.reject(error)
+  },
+)
+
+type RequestOptions = AxiosRequestConfig & {
+  transformData?: (data: any) => any
+}
+
+export async function request<T = any>(url: string, data: Record<string, any> = {}, options: RequestOptions = {}) {
+  const method = (options.method || 'GET').toString().toUpperCase() as Method
+  const config: AxiosRequestConfig = {
+    url,
+    method,
+    headers: options.headers,
+    params: method === 'GET' ? data : options.params,
+    data: method === 'GET' ? undefined : data,
+    ...options,
   }
 
-  let finalUrl = `${baseURL}/v1${url}`
+  const res = await api.request(config)
+  const resp = res.data
 
-  // 1. 🔍 HANDLE GET REQUEST PARAMETERS
-  if (config.method === 'GET') {
-    const queryString = toQueryString(data)
-    // Append the query string to the URL
-    if (queryString) {
-      finalUrl += queryString
-    }
-    // GET requests MUST NOT have a body
-    config.body = undefined
+  if (resp?.code === 2000) {
+    emit('unlogin', resp)
+    return Promise.reject(new Error('未登录或登录已过期，请重新登录'))
   }
 
-  // 2. 📝 HANDLE POST/PUT/DELETE REQUEST BODY (your original logic)
-  else if (options.method) { // Not GET
-    if (data instanceof FormData) {
-      config.body = data
-      // eslint-disable-next-line ts/ban-ts-comment
-      // @ts-ignore
-      delete config.headers['Content-Type']
-    }
-    else {
-      // eslint-disable-next-line ts/ban-ts-comment
-      // @ts-ignore
-      config.headers['Content-Type'] = 'application/json'
-      config.body = JSON.stringify(data)
-    }
+  if (resp?.code !== 0) {
+    emit('error', resp)
+    return Promise.reject(resp?.message)
   }
 
-  // 3. 🚀 FETCH CALL (Using the potentially modified finalUrl)
-  return fetch(finalUrl, config).then(async (response) => {
-    const data = await response.json();
-    if (!response.ok) {
-      const errorMessage = `${response.status}! ${data.message ?? ''}`
-      FMessage.error({
-        content: errorMessage,
-      })
-      return Promise.reject(new Error(errorMessage))// filepath: /Users/plh/code/golang-tutorial/web/src/api.ts
-    }
-    return data
-  }).then((data) => {
-    // 处理响应内容异常
-    if (data?.code === 2000) {
-      FMessage.error({
-        content: data?.message,
-      })
-      setToken('')
-      location.replace('/login')
-      return Promise.reject(new Error('未登录或登录已过期，请重新登录'))
-    }
-    if (data?.code !== 0) {
-      // Reject the promise with an error object containing code and message
-      FMessage.error({
-        content: data?.message,
-      })
-      return Promise.reject(data?.message)
-    }
-    if (options.transformData) {
-      return options.transformData(data)
-    }
-    return data.data
-  })
+  if (options.transformData) {
+    return options.transformData(resp)
+  }
+
+  return resp.data as T
 }

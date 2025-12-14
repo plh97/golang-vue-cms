@@ -73,11 +73,18 @@ export default defineRuntimeConfig({
       if (location.pathname === '/login') {
         return
       }
-      const res = await request('/profile')
-      return new Promise((resolve) => {
-        // 初始化应用的全局状态，可以通过 useModel('@@initialState') 获取，具体用法看@/components/UserCenter 文件
-        resolve(res)
-      })
+      try {
+        const res = await request('/profile')
+        return new Promise((resolve) => {
+          // 初始化应用的全局状态，可以通过 useModel('@@initialState') 获取，具体用法看@/components/UserCenter 文件
+          resolve(res)
+        })
+      } catch (error) {
+        return new Promise((resolve) => {
+          // 初始化应用的全局状态，可以通过 useModel('@@initialState') 获取，具体用法看@/components/UserCenter 文件
+          resolve(null)
+        })
+      }
     },
   },
   layout: {

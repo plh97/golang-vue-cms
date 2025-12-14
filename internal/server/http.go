@@ -1,7 +1,7 @@
 package server
 
 import (
-	apiV1 "go-nunu/api/v1"
+	v1 "go-nunu/api/v1"
 	"go-nunu/docs"
 	"go-nunu/internal/middleware"
 	"go-nunu/internal/router"
@@ -35,6 +35,11 @@ func NewHTTPServer(
 	// 设置前端静态资源
 	s.Use(static.Serve("/", fsys))
 	s.NoRoute(func(c *gin.Context) {
+		path := c.Request.URL.Path
+		if len(path) >= 3 && path[:3] == "/v1" {
+			c.JSON(nethttp.StatusNotFound, v1.ErrNotFound)
+			return
+		}
 		indexPageData, err := web.Assets().ReadFile("dist/index.html")
 		if err != nil {
 			c.String(nethttp.StatusNotFound, "404 page not found")
@@ -60,7 +65,7 @@ func NewHTTPServer(
 	)
 	s.GET("/", func(ctx *gin.Context) {
 		deps.Logger.WithContext(ctx).Info("hello")
-		apiV1.HandleSuccess(ctx, map[string]interface{}{
+		v1.HandleSuccess(ctx, map[string]interface{}{
 			":)": "Thank you for using nunu!",
 		})
 	})

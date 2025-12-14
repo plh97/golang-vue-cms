@@ -38,12 +38,14 @@ func AuthMiddleware(e *casbin.CachedEnforcer) gin.HandlerFunc {
 		}
 		// TODO: 这里可以根据需要添加更多的上下文信息，例如用户角色等
 		// 获取请求的资源和操作
-		sub := convertor.ToString(uid)
+		role := v.(*jwt.MyCustomClaims).Role
+		sub := convertor.ToString(role)
 		obj := model.ApiResourcePrefix + ctx.Request.URL.Path
 		act := ctx.Request.Method
 
 		// 检查权限
 		allowed, err := e.Enforce(sub, obj, act)
+		fmt.Printf("RBAC Check: sub=%s, obj=%s, act=%s, allowed=%v\n", sub, obj, act, allowed)
 		if err != nil {
 			v1.HandleError(ctx, http.StatusForbidden, v1.ErrForbidden, nil)
 			ctx.Abort()

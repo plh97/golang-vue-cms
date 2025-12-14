@@ -10,15 +10,15 @@ func InitRoleRouter(
 	deps RouterDeps,
 	r *gin.RouterGroup,
 ) {
-	// Non-strict permission routing group
-	noStrictAuthRouter := r.Group("/").Use(
-		middleware.NoStrictAuth(deps.JWT, deps.Logger),
+	// Protected routes requiring JWT and RBAC
+	protectedRouter := r.Group("/").Use(
+		middleware.StrictAuth(deps.JWT, deps.Logger),
 		middleware.AuthMiddleware(deps.Casbin),
 	)
 	{
-		noStrictAuthRouter.GET("/role/list", deps.RoleHandler.GetRoleList)
-		noStrictAuthRouter.POST("/role", deps.RoleHandler.CreateRole)
-		noStrictAuthRouter.PUT("/role", deps.RoleHandler.UpdateRolePermissions)
+		protectedRouter.GET("/role/list", deps.RoleHandler.GetRoleList)
+		protectedRouter.POST("/role", deps.RoleHandler.CreateRole)
+		protectedRouter.PUT("/role", deps.RoleHandler.UpdateRolePermissions)
 	}
 
 	// Strict permission routing group

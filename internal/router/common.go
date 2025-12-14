@@ -10,13 +10,13 @@ func InitCommonRouter(
 	deps RouterDeps,
 	r *gin.RouterGroup,
 ) {
-	// Non-strict permission routing group
-	noStrictAuthRouter := r.Group("/common").Use(
-		middleware.NoStrictAuth(deps.JWT, deps.Logger),
+	// Protected routes requiring JWT and RBAC
+	protectedRouter := r.Group("/common").Use(
+		middleware.StrictAuth(deps.JWT, deps.Logger),
 		middleware.AuthMiddleware(deps.Casbin),
 	)
 	{
-		noStrictAuthRouter.POST("/upload", deps.CommonHandler.UploadPresignedUrl)
-		noStrictAuthRouter.GET("/upload_presigned_url", deps.CommonHandler.UploadPresignedUrl)
+		protectedRouter.POST("/upload", deps.CommonHandler.UploadPresignedUrl)
+		protectedRouter.GET("/upload_presigned_url", deps.CommonHandler.UploadPresignedUrl)
 	}
 }

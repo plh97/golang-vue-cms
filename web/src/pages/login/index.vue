@@ -19,7 +19,8 @@ const formRef = ref(null)
 const state = reactive({
   submitLoading: false,
   submitText: '登录',
-  username: 'admin@gmail.com',
+  // username: 'admin@gmail.com',
+  username: 'user@gmail.com',
   password: '123456',
 })
 const validator = useValidator(state)
@@ -56,7 +57,6 @@ async function submitHandler() {
     method: 'POST',
   }).then(async (res) => {
     setToken(res.accessToken)
-    // window.location.replace('/user')
     router.replace('/user')
   }).catch(() => {
     state.submitLoading = false

@@ -24,6 +24,7 @@
         "@fesjs/plugin-model": "^3.0.3",
         "@fesjs/plugin-request": "^4.0.1",
         "@wangeditor/editor-for-vue": "^5.1.12",
+        "axios": "^1.13.2",
         "core-js": "^3.43.0",
         "html2canvas": "^1.4.1",
         "jsqr": "^1.4.0",

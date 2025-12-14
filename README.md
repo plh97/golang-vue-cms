@@ -7,7 +7,7 @@
 <a name="english"></a>
 ## English
 
-A full-stack Content Management System built with Go backend and Vue3 frontend, featuring role-based access control (RBAC) using Casbin.
+A full-stack Content Management System built with Go backend and Vue3 frontend, featuring role-based access control (RBAC) using Casbin. Project skeleton comes from the [nunu-go](https://github.com/go-nunu/nunu) scaffold, with RBAC/CRUD flows layered on top.
 
 ## Features
 
@@ -109,6 +109,7 @@ A full-stack Content Management System built with Go backend and Vue3 frontend, 
    # or
    go run cmd/migration/main.go
    ```
+   > This step will automatically create the table structure, admin user, roles, permissions, and other basic data.
 
 5. **Start the server**
    ```bash
@@ -230,7 +231,7 @@ MIT License
 <a name="中文"></a>
 ## 中文
 
-基于 Go 后端和 Vue3 前端构建的全栈内容管理系统，使用 Casbin 实现基于角色的访问控制（RBAC）。
+基于 Go 后端和 Vue3 前端构建的全栈内容管理系统，使用 Casbin 实现基于角色的访问控制（RBAC）。项目骨架来自 [nunu-go](https://github.com/go-nunu/nunu) 脚手架，并在其上扩展了 RBAC 与业务 CRUD 能力。
 
 ## 功能特性
 
@@ -332,6 +333,7 @@ MIT License
    # 或者
    go run cmd/migration/main.go
    ```
+   > 这一步会自动创建表结构、管理员、角色、权限等基础数据。
 
 5. **启动服务器**
    ```bash

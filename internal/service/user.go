@@ -2,8 +2,6 @@ package service
 
 import (
 	"context"
-	"encoding/json"
-	"fmt"
 	v1 "go-nunu/api/v1"
 	"go-nunu/internal/model"
 	"go-nunu/internal/repository"
@@ -60,18 +58,12 @@ func (s *userService) Register(ctx context.Context, req *v1.RegisterRequest) err
 		UserId:   userId,
 		Email:    req.Email,
 		Password: string(hashedPassword),
-		Name:     "",
+		Name:     "new user",
 	}
-	// Transaction demo
 	err = s.tm.Transaction(ctx, func(ctx context.Context) error {
-		// Create a user
 		if err = s.userRepo.Create(ctx, user); err != nil {
-			// USE TO JSON
-			userJson, _ := json.Marshal(user)
-			fmt.Println("6666666", string(userJson))
 			return err
 		}
-		// TODO: other repo
 		return nil
 	})
 	return err
@@ -87,7 +79,7 @@ func (s *userService) Login(ctx context.Context, req *v1.LoginRequest) (string, 
 	if err != nil {
 		return "", err
 	}
-	token, err := s.jwt.GenToken(user.UserId, time.Now().Add(time.Hour*24*90))
+	token, err := s.jwt.GenToken(user, time.Now().Add(time.Hour*24*90))
 	if err != nil {
 		return "", err
 	}
