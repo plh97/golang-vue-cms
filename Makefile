@@ -27,8 +27,9 @@ build:
 
 .PHONY: docker
 docker:
-	docker build -f deploy/build/Dockerfile --build-arg APP_RELATIVE_PATH=./cmd/task -t 1.1.1.1:5000/demo-task:v1 .
-	docker run --rm -i 1.1.1.1:5000/demo-task:v1
+	docker build -f deploy/build/Dockerfile --build-arg APP_ENV=prod --build-arg APP_RELATIVE_PATH=./cmd/server -t 1.1.1.1:8291/server:v1 .
+# 	docker run --rm -i 1.1.1.1:8291/server:v1
+	docker run --rm -it -p 8291:8291 1.1.1.1:8291/server:v1
 
 .PHONY: swag
 swag:
