@@ -1,53 +1,51 @@
 services:
-  mysql:
-    image: mysql:8.0.39
-    restart: unless-stopped
-    ports:
-      - 3380:3306
-    environment:
-      - MYSQL_ROOT_PASSWORD=123456
-      - MYSQL_DATABASE=user
-      - MYSQL_ROOT_HOST=%
-      - TZ=Asia/Shanghai
-    command:
-      - --default-authentication-plugin=caching_sha2_password
-      - --character-set-server=utf8mb4
-      - --collation-server=utf8mb4_unicode_ci
-    volumes:
-      - mysql-data:/var/lib/mysql
-    healthcheck:
-      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -u root -p 123456"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+  # mysql:
+  #   image: mysql:8.0.39
+  #   restart: unless-stopped
+  #   ports:
+  #     - 3380:3306
+  #   environment:
+  #     - MYSQL_ROOT_PASSWORD=123456
+  #     - MYSQL_DATABASE=user
+  #     - MYSQL_ROOT_HOST=%
+  #     - TZ=Asia/Shanghai
+  #   command:
+  #     - --default-authentication-plugin=caching_sha2_password
+  #     - --character-set-server=utf8mb4
+  #     - --collation-server=utf8mb4_unicode_ci
+  #   volumes:
+  #     - mysql-data:/var/lib/mysql
+  #   healthcheck:
+  #     test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -u root -p 123456"]
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 5
 
-  redis:
-    image: redis:7.2-alpine
-    restart: unless-stopped
-    command: ["redis-server", "--appendonly", "yes"]
-    ports:
-      - "6379:6379"
-    volumes:
-      - redis-data:/data
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+  # redis:
+  #   image: redis:7.2-alpine
+  #   restart: unless-stopped
+  #   command: ["redis-server", "--appendonly", "yes"]
+  #   ports:
+  #     - "6379:6379"
+  #   volumes:
+  #     - redis-data:/data
+  #   healthcheck:
+  #     test: ["CMD", "redis-cli", "ping"]
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 5
       
 
   phpmyadmin:
     image: phpmyadmin:5.2-apache
     restart: unless-stopped
     environment:
-      PMA_HOST: mysql
-      PMA_PORT: 3306
+      PMA_HOST: 18.143.194.24
+      PMA_PORT: 3380
       PMA_USER: root
       PMA_PASSWORD: 123456
     ports:
       - "8080:80"
-    depends_on:
-      - mysql
 
   # redisinsight:
   #   image: redislabs/redisinsight:latest
@@ -56,7 +54,7 @@ services:
   #   volumes:
   #     - ./Users/ajeetraina/data/redisinsight:/db 
 
-volumes:
-  mysql-data:
-  redis-data:
-  # redisinsight-data: # 新增 RedisInsight 的数据卷
+# volumes:
+#   mysql-data:
+#   redis-data:
+#   # redisinsight-data: # 新增 RedisInsight 的数据卷
