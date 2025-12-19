@@ -7,7 +7,7 @@
     },
     {
       "source": "/v1/:path*",
-      "destination": "https://18.143.194.24/v1/:path*"
+      "destination": "http://18.143.194.24:8291/v1/:path*"
     }
   ]
 }
