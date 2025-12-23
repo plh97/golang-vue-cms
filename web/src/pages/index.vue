@@ -8,7 +8,7 @@ defineRouteMeta({
 
 const router = useRouter()
 
-router.replace('/user')
+router.replace('/account')
 </script>
 
 <template>
