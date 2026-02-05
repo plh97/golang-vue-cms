@@ -40,7 +40,7 @@ services:
     image: phpmyadmin:5.2-apache
     restart: unless-stopped
     environment:
-      PMA_HOST: 18.143.194.24
+      PMA_HOST: 45.76.197.2
       PMA_PORT: 3380
       PMA_USER: root
       PMA_PASSWORD: 123456

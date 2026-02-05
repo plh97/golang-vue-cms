@@ -1,8 +1,7 @@
 resource "vultr_instance" "instance" {
   plan              = "vc2-1c-1gb"
   region            = "nrt"
-  snapshot_id       = "d7bf61a8-856e-4fdc-bb3b-34c4f6ad5cf1"
-  # : acbe8a72-6ad8-413e-ad71-a49db226cd11
+  os_id             = 1743
   firewall_group_id = "acbe8a72-6ad8-413e-ad71-a49db226cd11"
   hostname          = "vultr.guest"
   label             = "calendar make appointment instance"
