@@ -54,11 +54,26 @@ func (s *userService) Register(ctx context.Context, req *v1.RegisterRequest) err
 	if err != nil {
 		return err
 	}
+	now := int(time.Now().Unix())
 	user = &model.User{
-		UserId:   userId,
-		Email:    req.Email,
-		Password: string(hashedPassword),
-		Name:     "new user",
+		UserId:          userId,
+		Email:           req.Email,
+		Password:        string(hashedPassword),
+		Name:            "new user",
+		Image:           "",
+		Gender:          0,
+		Udid:            "",
+		UserType:        2,
+		IsSubmitProfile: 2,
+		Status:          1,
+		CountryID:       0,
+		RegisterIP:      "",
+		RegisterTime:    now,
+		RegisterType:    0,
+		LastLoginIP:     "",
+		LastLoginTime:   now,
+		LastLoginType:   0,
+		DeactivateTime:  0,
 	}
 	err = s.tm.Transaction(ctx, func(ctx context.Context) error {
 		if err = s.userRepo.Create(ctx, user); err != nil {

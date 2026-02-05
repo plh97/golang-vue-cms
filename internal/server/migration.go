@@ -5,6 +5,7 @@ import (
 	"go-nunu/internal/model"
 	"go-nunu/pkg/log"
 	"os"
+	"time"
 
 	"github.com/casbin/casbin/v2"
 	"go.uber.org/zap"
@@ -61,12 +62,27 @@ func (m *MigrateServer) initAdminUser() error {
 		m.log.Error("bcrypt.GenerateFromPassword error", zap.Error(err))
 		return err
 	}
+	now := int(time.Now().Unix())
 	return m.db.Create(&model.User{
-		BaseModel: model.BaseModel{ID: 1},
-		UserId:    model.AdminUserID,
-		Password:  string(hashedPassword),
-		Email:     "admin@gmail.com",
-		Name:      "Administrator",
+		BaseModel:       model.BaseModel{ID: 1},
+		UserId:          model.AdminUserID,
+		Password:        string(hashedPassword),
+		Email:           "admin@gmail.com",
+		Name:            "Administrator",
+		Image:           "",
+		Gender:          0,
+		Udid:            "",
+		UserType:        2,
+		IsSubmitProfile: 2,
+		Status:          1,
+		CountryID:       0,
+		RegisterIP:      "",
+		RegisterTime:    now,
+		RegisterType:    0,
+		LastLoginIP:     "",
+		LastLoginTime:   now,
+		LastLoginType:   0,
+		DeactivateTime:  0,
 	}).Error
 }
 
@@ -106,8 +122,47 @@ func (m *MigrateServer) initRBACAndDemoData() error {
 		h, _ := bcrypt.GenerateFromPassword([]byte(p), bcrypt.DefaultCost)
 		return string(h)
 	}
-	adminUser := model.User{UserId: "admin-uid", Email: "admin@gmail.com", Password: hashPwd("123456"), Name: "Admin"}
-	devUser := model.User{UserId: "user-uid", Email: "user@gmail.com", Password: hashPwd("123456"), Name: "DevUser"}
+	now := int(time.Now().Unix())
+	adminUser := model.User{
+		UserId:          "admin-uid",
+		Email:           "admin@gmail.com",
+		Password:        hashPwd("123456"),
+		Name:            "Admin",
+		Image:           "",
+		Gender:          0,
+		Udid:            "",
+		UserType:        2,
+		IsSubmitProfile: 2,
+		Status:          1,
+		CountryID:       0,
+		RegisterIP:      "",
+		RegisterTime:    now,
+		RegisterType:    0,
+		LastLoginIP:     "",
+		LastLoginTime:   now,
+		LastLoginType:   0,
+		DeactivateTime:  0,
+	}
+	devUser := model.User{
+		UserId:          "user-uid",
+		Email:           "user@gmail.com",
+		Password:        hashPwd("123456"),
+		Name:            "DevUser",
+		Image:           "",
+		Gender:          0,
+		Udid:            "",
+		UserType:        2,
+		IsSubmitProfile: 2,
+		Status:          1,
+		CountryID:       0,
+		RegisterIP:      "",
+		RegisterTime:    now,
+		RegisterType:    0,
+		LastLoginIP:     "",
+		LastLoginTime:   now,
+		LastLoginType:   0,
+		DeactivateTime:  0,
+	}
 	if err := m.db.Create(&adminUser).Error; err != nil {
 		return err
 	}

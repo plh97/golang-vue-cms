@@ -7,7 +7,8 @@ function getBaseURL() {
     return ''
   }
   const envToUrlMap = {
-    development: 'http://45.76.197.2:8291',
+    development: 'http://127.0.0.1:8291',
+    // development: 'http://45.76.197.2:8291',
     // test: '',
     // prod: '',
   }
